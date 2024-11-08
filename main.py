@@ -1,5 +1,5 @@
-import tenserflow as tf
-from tenserflow.keras import *
+import tensorflow as tf
+from tensorflow.keras import *
 import numpy as np
 
 inputd = 10
