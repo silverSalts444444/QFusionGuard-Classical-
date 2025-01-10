@@ -1,36 +1,51 @@
 class Simulator():
-    def __init__(self,inputs):
-        self.temp = inputs[0]
-        self.magstr = inputs[1]
-        self.tritflow = inputs[2]
-        self.powerin = inputs[3]
-        self.powerout = inputs[4]
-        self.h4flow = inputs[5]
-        self.neutronflux = inputs[6]
-        self.coolantflow = inputs[7]
-        self.fuelin = inputs[8]
-        self.rad = inputs[9]
+    history = [15,30,0.042]
+    def __init__(self, tempst, magstr, tritflow, powerin, coolantflow):
+        # Initialize the simulator with the input parameters
+        self.tempst = tempst
+        self.magstr = magstr
+        self.tritflow = tritflow
+        self.powerin = powerin
+        self.coolantflow = coolantflow
+        self.history = [15,30,0.042]
 
-        self.base_efficiency = 0.85  
-        self.heat_loss_factor = 0.1  
-        self.max_temp = 20  
-        self.max_mag_conf = 10
-    def sim(self):
-        fusion_energy = self.temp * self.magstr * self.tritflow 
-        net_energy = fusion_energy - self.rad
+
+    def simulate(self):
+        htemp = self.history[0]
+        hrad_loss = self.history[1]
+        hefficiency = self.history[2]
+
+        # Example of how outputs might be derived (this is a placeholder for actual fusion reactor physics)
+        powerout = hefficiency * self.powerin * self.tritflow / self.tempst# Placeholder for actual calculations
+        rad_loss = (hrad_loss + (self.tempst * self.magstr * 0.05))/2  # Placeholder for radiation loss calculation
         
-        cooling_loss = self.coolantflow * (1 - self.base_efficiency)
+        # Efficiency is calculated as power output divided by input power
+        efficiency = powerout / self.powerin if self.powerin != 0 else 0
 
-            # Final power output and losses
-        output_energy = self.base_efficiency * net_energy - cooling_loss
-        total_loss = self.powerin - output_energy + cooling_loss + self.heat_loss_factor * fusion_energy
+        temp = (((htemp + self.tempst)/2) + htemp)/2
 
-            # Stability and efficiency calculations
-        stability = 1 - abs(self.powerin - output_energy) / (self.powerin + 1e-6)
-        efficiency = output_energy / self.powerin if self.powerin > 0 else 0
+        self.history = [temp, rad_loss, efficiency]
 
-        return [output_energy, total_loss, stability, efficiency]
-        
+        return temp, rad_loss, efficiency
 
+    def update_inputs(self, temp=None, magstr=None, tritflow=None, powerin=None, coolantflow=None):
+        # Update the inputs if new values are provided
+        if temp is not None:
+            self.temp = temp
+        if magstr is not None:
+            self.magstr = magstr
+        if tritflow is not None:
+            self.tritflow = tritflow
+        if powerin is not None:
+            self.powerin = powerin
+        if coolantflow is not None:
+            self.coolantflow = coolantflow
 
-
+    def get_inputs(self):
+        # Return the current input values
+        return [self.tempst,
+         self.magstr,
+         self.tritflow,
+         self.powerin,
+        self.coolantflow
+        ]
