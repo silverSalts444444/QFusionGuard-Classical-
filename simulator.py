@@ -7,22 +7,22 @@ class Simulator():
         self.tritflow = tritflow
         self.powerin = powerin
         self.coolantflow = coolantflow
-        self.history = [15,30,0.042]
+        self.history = [45,70,1]
 
 
     def simulate(self):
         htemp = self.history[0]
         hrad_loss = self.history[1]
         hefficiency = self.history[2]
-
+        temp = (((htemp + self.tempst)/2) + htemp)/2
         # Example of how outputs might be derived (this is a placeholder for actual fusion reactor physics)
-        powerout = hefficiency * self.powerin * self.tritflow / self.tempst# Placeholder for actual calculations
+        powerout = (hefficiency * self.powerin)# Placeholder for actual calculations
         rad_loss = (hrad_loss + (self.tempst * self.magstr * 0.05))/2  # Placeholder for radiation loss calculation
         
         # Efficiency is calculated as power output divided by input power
-        efficiency = powerout / self.powerin if self.powerin != 0 else 0
+        efficiency = ((powerout+temp*0.001)/ self.powerin) if self.powerin != 0 else 0
 
-        temp = (((htemp + self.tempst)/2) + htemp)/2
+        
 
         self.history = [temp, rad_loss, efficiency]
 
